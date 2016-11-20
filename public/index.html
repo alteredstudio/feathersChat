@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <title>Welcome to Feathers</title>
+  </head>
+  <body>
+
+
+    <script src="https://cdn.rawgit.com/feathersjs/feathers-client/v1.0.0/dist/feathers.js"></script>
+    <script src="socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+      var socket = io();
+      var app = feathers();
+      app.configure(feathers.socketio(socket));
+      var messages = app.service('messages');
+
+      messages.on('created', function(message) {
+        var messageList = document.getElementById("messageList");
+        messageList.innerHTML += "<h4>" + message.text + "</h4>";
+        console.log("Your message was sent:", message.text);
+      });
+
+      function sendMessage() {
+        var messageValue = document.getElementById("message").value;
+        messages.create({text: messageValue});
+        document.getElementById("message").value = "";
+      }
+
+      function initMessages() {
+        var oldMessageList = document.getElementById("oldMessageList");
+        var oldMessages = messages.find();
+        oldMessageList.innerHTML += "<h4>" + oldMessages.text + "</h4>";
+      }
+      initMessages();
+
+    </script>
+    <div id="oldMessageList"></div>
+    <div id="messageList"></div>
+    <input type="text" name="name" id="message" value="" placeholder="Message content">
+    <button type="button" name="button" onClick="sendMessage();">Send message</button>
+
+  </body>
+</html>
